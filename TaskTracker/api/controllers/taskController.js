@@ -18,10 +18,16 @@ const getAllTasks=async(req,res)=>{
 const createTask= async(req,res)=>{
     
     try{
-        
-        var task=new taskModel(req.body)
-        await task.save()
-        res.status(200).send(task)
+        const doc=await taskModel.create({
+            name:req.body.name,
+            category:req.body.category,
+            Status:req.body.Status
+
+        })
+
+        // var task=new taskModel(req.body)
+        // await task.save()
+        res.status(200).send(doc)
     }
     catch(error)
     {
@@ -75,10 +81,32 @@ const deleteTaskById=async(req,res)=>{
 
 }
 
+const search= async(req,res)=>{
+
+    console.log(typeof(req.params.Key))
+   const book= await taskModel.find(
+    {
+        "$or":[
+            {"name":{$regex: req.params.Key}},
+            {"category":{$regex:req.params.Key}},
+            {"Status":{$regex:req.params.Key}}
+            
+        ]
+    }
+
+    ).sort({category:-1})
+    
+
+    res.status(200).send(book)
+
+
+}
+
 module.exports={
     getAllTasks,
     createTask,
     getTaskById,
     editTaskById,
-    deleteTaskById
+    deleteTaskById,
+    search
 }

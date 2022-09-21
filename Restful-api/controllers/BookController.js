@@ -1,14 +1,14 @@
 
 const express = require('express')
 const bodyParser = require('body-parser')
-const bookmodel =require('../models.js/Bookschema.js')
+const {bookmodel,authormodel} =require('../models.js/Bookschema.js')
 const { isValidObjectId } = require('mongoose')
 const app = express()
 app.use(bodyParser.json())
 
 
 const GetBook =async(req,res)=>{
-    const books=await bookmodel.find({})
+    const books=await bookmodel.find({}).populate('Author')
 
     try{
         res.status(200).send(books)
@@ -20,16 +20,22 @@ const GetBook =async(req,res)=>{
 }
 
 const  createBook = async(req,res)=>{
-    const Book=new bookmodel(req.body)
 
-    try {
-        await Book.save()
-        res.status(200).send(Book)
+    const author= await authormodel.create({
+      AuthorName:req.body.AuthorName,
+      AuthorAddress:req.body.AuthorAddress
+    })
+   
+    const Book=await bookmodel.create({
+        BookName:req.body.BookName,
+        Author:author._id,
+        Price:req.body.Price
+      })
+      res.status(200).send(Book)
+
+
     }
-    catch(error){
-        res.status(500).send(error)
-    }
-  }
+
 
   const updatebook =async(req,res)=>{
 

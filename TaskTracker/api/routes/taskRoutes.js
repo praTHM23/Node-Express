@@ -4,7 +4,9 @@ const {
     createTask,
     getTaskById,
     editTaskById,
-    deleteTaskById
+    deleteTaskById,
+    search
+
 } =require('../controllers/taskController.js')
 
 const taskRouter=express.Router()
@@ -15,5 +17,8 @@ taskRouter.post('/',createTask)
 taskRouter.get('/:id',getTaskById)
 taskRouter.put('/:id',editTaskById)
 taskRouter.delete('/:id',deleteTaskById)
+
+
+taskRouter.get('/search/:Key',search)
 
 module.exports=taskRouter
